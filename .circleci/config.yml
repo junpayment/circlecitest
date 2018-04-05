@@ -15,9 +15,9 @@ jobs:
 
       - restore_cache:
           keys:
-            - {{ .Environment.CACHE_KEY }}
+            - image_cache_key-{{ .Branch }}
           paths:
-            - {{ .Environment.CACHE_FILE }}
+            - /caches/app.tar
 
       - run:
           name: load docker cache
@@ -38,9 +38,9 @@ jobs:
             docker save -o ${CACHE_FILE} ${CACHE_IMAGE}
 
       - save_cache:
-          key: {{ .Environment.CACHE_KEY }}
+          key: image_cache_key-{{ .Branch }}
           paths:
-            - {{ .Environment.CACHE_FILE }}
+            - /caches/app.tar
 
 workflows:
   version: 2
