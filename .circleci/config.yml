@@ -23,10 +23,16 @@ jobs:
             docker load -i ${CACHE_FILE} | true
 
       - run:
-          command: docker build ./ -t hello-world2
+          command: docker build --cache-from=app -t app .
 
       - run:
-          command: docker run hello-world2
+          command: docker run app
+
+      - run:
+          name: save build image for cache
+          command: |
+            mkdir -p ${CACHE_DIR}
+            docker save -o ${CACHE_FILE} ${CACHE_IMAGE}
 
       - save_cache:
           key: v1-{{ .Branch }}
