@@ -16,7 +16,7 @@ jobs:
           keys:
             - v1-{{ .Branch }}
           paths:
-            - ${CACHE_FILE}
+            - /caches/app.tar
 
       - run:
           name: load docker cache
@@ -39,4 +39,4 @@ jobs:
       - save_cache:
           key: v1-{{ .Branch }}
           paths:
-            - ${CACHE_FILE}
+            - /caches/app.tar
