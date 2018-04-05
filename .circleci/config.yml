@@ -3,11 +3,32 @@ jobs:
   build:
     docker:
       - image: google/cloud-sdk
+        environment:
+          CACHE_DIR:  /caches
+          CACHE_FILE: /caches/app.tar
 
     steps:
       - checkout
       - setup_remote_docker
+
+      - restore_cache:
+          key: v1-{{ .Branch }}
+          paths:
+            - ${CACHE_FILE}
+
+      - run:
+          name: load docker cache
+          command: |
+            set +o pipefail
+            docker load -i ${CACHE_FILE} | true
+
       - run:
           command: docker build ./ -t hello-world2
+
       - run:
-          command: docker run hello-world
+          command: docker run hello-world2
+
+      - save_cache:
+          key: v1-{{ .Branch }}
+          paths:
+            - ${CACHE_FILE}
