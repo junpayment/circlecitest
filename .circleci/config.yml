@@ -3,11 +3,6 @@ jobs:
   build:
     docker:
       - image: google/cloud-sdk
-        environment:
-          CACHE_KEY:   image_cache_key-{{ .Branch }}
-          CACHE_DIR:   /caches
-          CACHE_FILE:  /caches/app.tar
-          CACHE_IMAGE: app
 
     steps:
       - checkout
@@ -23,32 +18,65 @@ jobs:
           name: load docker cache
           command: |
             set +o pipefail
-            docker load -i ${CACHE_FILE} | true
+            docker load -i /caches/app.tar | true
 
       - run:
-          command: docker build --cache-from=app -t ${CACHE_IMAGE} .
+          command: docker build --cache-from=app -t app .
 
       - run:
           command: |
             docker run \
             -e HOGE=1 \
             -e CHOME=2 \
-            ${CACHE_IMAGE}
+            app
 
       - run:
           name: save build image for cache
           command: |
-            mkdir -p ${CACHE_DIR}
-            docker save -o ${CACHE_FILE} ${CACHE_IMAGE}
+            mkdir -p /caches
+            docker save -o /caches/app.tar app
 
       - save_cache:
           key: image_cache_key-{{ .Branch }}
           paths:
             - /caches/app.tar
 
+  push:
+    docker:
+      - image: google/cloud-sdk
+
+    steps:
+      - checkout
+      - setup_remote_docker
+
+      - restore_cache:
+          keys:
+            - image_cache_key-{{ .Branch }}
+          paths:
+            - /caches/app.tar
+
+      - run:
+          name: load docker cache
+          command: |
+            set +o pipefail
+            docker load -i /caches/app.tar | true
+
+      - run:
+          name: login dockerhub
+          command: |
+            docker login -u ${DOCKERHUB_PASSWORD} -p ${DOCKERHUB_PASSWORD}
+
+      - run:
+          name: push image
+          command: |
+            docker tag app junpayment/circlecitest
+            docker push junpayment/circlecitest
+
 workflows:
   version: 2
   build-deploy:
     jobs:
       - build
-
+      - push:
+          requires:
+            - build
