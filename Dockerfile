@@ -1,3 +1,5 @@
-FROM hello-world
+FROM alpine
 
-CMD echo "holle!!!"
+COPY README.md README.md
+
+CMD echo "hello!!!"
