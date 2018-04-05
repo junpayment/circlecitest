@@ -30,8 +30,10 @@ jobs:
 
       - run:
           command: |
-            docker run ${CACHE_IMAGE} env -e HOGE=1
-                                        -e CHOME=2
+            docker run \
+            -e HOGE=1 \
+            -e CHOME=2 \
+            ${CACHE_IMAGE}
 
       - run:
           name: save build image for cache
