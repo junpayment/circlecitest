@@ -47,7 +47,4 @@ workflows:
   build-deploy:
     jobs:
       - build
-      - deploy-stage:
-          requires:
-            - build
 
