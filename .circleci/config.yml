@@ -29,9 +29,8 @@ jobs:
           command: docker build --cache-from=app -t ${CACHE_IMAGE} .
 
       - run:
-          command:
-            ->
-              docker run ${CACHE_IMAGE} -e HOGE=1 \
+          command: |
+              docker run ${CACHE_IMAGE} -e HOGE=1
                                         -e CHOME=2
 
       - run:
