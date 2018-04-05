@@ -4,8 +4,9 @@ jobs:
     docker:
       - image: google/cloud-sdk
         environment:
-          CACHE_DIR:  /caches
-          CACHE_FILE: /caches/app.tar
+          CACHE_KEY:   image_cache_key-{{ .Branch }}
+          CACHE_DIR:   /caches
+          CACHE_FILE:  /caches/app.tar
           CACHE_IMAGE: app
 
     steps:
@@ -14,9 +15,9 @@ jobs:
 
       - restore_cache:
           keys:
-            - v1-{{ .Branch }}-yeah
+            - {{ .Environment.CACHE_KEY }}
           paths:
-            - /caches/app.tar
+            - {{ .Environment.CACHE_FILE }}
 
       - run:
           name: load docker cache
@@ -37,6 +38,16 @@ jobs:
             docker save -o ${CACHE_FILE} ${CACHE_IMAGE}
 
       - save_cache:
-          key: v1-{{ .Branch }}-yeah
+          key: {{ .Environment.CACHE_KEY }}
           paths:
-            - /caches/app.tar
+            - {{ .Environment.CACHE_FILE }}
+
+workflows:
+  version: 2
+  build-deploy:
+    jobs:
+      - build
+      - deploy-stage:
+          requires:
+            - build
+
