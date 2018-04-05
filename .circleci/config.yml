@@ -37,6 +37,6 @@ jobs:
             docker save -o ${CACHE_FILE} ${CACHE_IMAGE}
 
       - save_cache:
-          key: v1-{{ .Branch }}
+          key: v1-{{ .Branch }}-{{ epoch }}
           paths:
             - /caches/app.tar
