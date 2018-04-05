@@ -13,7 +13,8 @@ jobs:
       - setup_remote_docker
 
       - restore_cache:
-          key: v1-{{ .Branch }}
+          keys:
+            - v1-{{ .Branch }}
           paths:
             - ${CACHE_FILE}
 
