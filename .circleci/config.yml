@@ -72,11 +72,24 @@ jobs:
             docker tag app junpayment/circlecitest
             docker push junpayment/circlecitest
 
+  say_yeah:
+    docker:
+      - image: alpine
+    steps:
+      - run:
+          name: yeah
+          command: |
+            echo "this is ${THIS_IS}"
+
 workflows:
   version: 2
   build-deploy:
     jobs:
-      - build
-      - push:
-          requires:
-            - build
+      - say_yeah:
+          filters:
+            branches:
+              only:
+               - master
+               - hoge
+          context: context-{{ .Branch }}
+
