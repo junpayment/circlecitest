@@ -1,4 +1,6 @@
 version: 2.1
+orbs:
+  slack: circleci/slack
 jobs:
   say_yeah:
     docker:
@@ -13,9 +15,9 @@ workflows:
   version: 2
   build-deploy:
     jobs:
+      - slack/approval-notification:
+          message: this is test
+          webhook: ${SLACK_WEBHOOK}
       - say_yeah:
-          filters:
-            branches:
-              only:
-               - master
-
+          requires:
+            - slack/approval-notification
