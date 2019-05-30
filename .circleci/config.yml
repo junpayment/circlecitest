@@ -1,6 +1,6 @@
 version: 2.1
 orbs:
-  slack: circleci/slack
+  slack: circleci/slack@2.5.1
 jobs:
   say_yeah:
     docker:
