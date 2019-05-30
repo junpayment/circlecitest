@@ -10,6 +10,11 @@ jobs:
           name: yeah
           command: |
             echo "this is ${THIS_IS}"
+  hold:
+    docker:
+      - image: alpine
+    steps:
+      - run: echo "its hold"
 
 workflows:
   version: 2
@@ -18,6 +23,10 @@ workflows:
       - slack/approval-notification:
           message: this is test
           webhook: ${SLACK_WEBHOOK}
-      - say_yeah:
+      - hold:
+          type: approval
           requires:
             - slack/approval-notification
+      - say_yeah:
+          requires:
+            - hold
